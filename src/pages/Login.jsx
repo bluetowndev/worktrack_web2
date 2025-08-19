@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import loginImg from "../assets/login image.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import Header from "../compnents/Header";
+import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
@@ -14,6 +15,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     setFormData({
@@ -31,10 +33,11 @@ const Login = () => {
       const response = await axios.post(`${API_BASE_URL}/user/login`, formData);
       
       if (response.data.success) {
-        // Store tokens and user data in localStorage
-        localStorage.setItem("accessToken", response.data.accessToken);
-        localStorage.setItem("refreshToken", response.data.refreshToken);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
+        // Use the login function from auth context
+        login(response.data.user, {
+          accessToken: response.data.accessToken,
+          refreshToken: response.data.refreshToken
+        });
 
         // Redirect based on role
         if (response.data.user.role === "ADMIN") {
@@ -99,9 +102,9 @@ const Login = () => {
               />
             </div>
             <div className="flex items-center justify-between mb-6">
-              <a href="#" className="text-indigo-500 text-sm hover:underline">
+              <Link to="/forgot-password" className="text-indigo-500 text-sm hover:underline">
                 Forgot password
-              </a>
+              </Link>
             </div>
             <button
               type="submit"

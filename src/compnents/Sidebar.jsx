@@ -1,6 +1,16 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
   return (
     // <div className="w-64 min-h-screen bg-[#6C6EF5] text-white font-bold flex flex-col transition-all duration-300  h-full">
     <div className="w-64 min-h-screen bg-[#6C6EF5] text-white font-bold flex flex-col transition-all duration-300 h-full mt-14 sm:mt-0">
@@ -19,7 +29,12 @@ const Sidebar = () => {
 
       {/* Logout Section */}
       <div className="p-4 border-t border-blue-700 mt-60">
-        <button className="w-full text-left hover:text-blue-300">Logout</button>
+        <button 
+          onClick={handleLogout}
+          className="w-full text-left hover:text-blue-300"
+        >
+          Logout
+        </button>
       </div>
     </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import loginImg from "../assets/login image.jpg";
 import signupImg from "../assets/signup.jpg";
 import Header from "../compnents/Header";
@@ -30,6 +30,28 @@ const Signup = () => {
     confirmPassword: "",
   });
   const [loading, setLoading] = useState(false);
+  const [orgOptions, setOrgOptions] = useState([]);
+  const [orgLoading, setOrgLoading] = useState(false);
+  const [orgError, setOrgError] = useState("");
+
+  // Fetch organization list from admins' company names
+  useEffect(() => {
+    const fetchOrganizations = async () => {
+      try {
+        setOrgLoading(true);
+        setOrgError("");
+        const res = await axios.get(`${API_BASE_URL}/user/admin-companies`);
+        setOrgOptions(res.data?.companies || []);
+      } catch (error) {
+        setOrgError("Failed to load organizations");
+        setOrgOptions([]);
+      } finally {
+        setOrgLoading(false);
+      }
+    };
+
+    fetchOrganizations();
+  }, []);
 
   const handleRoleChange = useCallback((e) => {
     const newRole = e.target.value;
@@ -218,10 +240,20 @@ const Signup = () => {
                     onChange={handleInputChange}
                     required
                   >
-                    <option value="">Select Organization</option>
-                    <option value="org1">Organization 1</option>
-                    <option value="org2">Organization 2</option>
-                    <option value="org3">Organization 3</option>
+                    <option value="">{orgLoading ? "Loading organizations..." : "Select Organization"}</option>
+                    {orgError && (
+                      <option value="" disabled>
+                        {orgError}
+                      </option>
+                    )}
+                    {!orgLoading && !orgError && orgOptions.length === 0 && (
+                      <option value="" disabled>
+                        No organizations available
+                      </option>
+                    )}
+                    {!orgLoading && !orgError && orgOptions.map((org) => (
+                      <option key={org} value={org}>{org}</option>
+                    ))}
                   </select>
                 </div>
                 <div>

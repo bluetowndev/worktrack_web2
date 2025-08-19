@@ -1,12 +1,19 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const AdminSidebar = () => {
   const navigate = useNavigate(); // Initialize useNavigate
+  const { logout } = useAuth();
 
   // Function to handle redirect to the AdminDashboard
   const handleNavigateToDashboard = () => {
     navigate("/admindashboard"); // Navigate to the Admin Dashboard route
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
   };
 
   return (
@@ -29,7 +36,12 @@ const AdminSidebar = () => {
 
         {/* Logout Section */}
         <div className="p-4 border-t border-blue-700 mt-60">
-          <button className="w-full text-left hover:text-blue-300">Logout</button>
+          <button 
+            onClick={handleLogout}
+            className="w-full text-left hover:text-blue-300"
+          >
+            Logout
+          </button>
         </div>
       </div>
     </div>
